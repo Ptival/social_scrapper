@@ -1,4 +1,12 @@
-TODO
+To run this you need Scrapy: http://scrapy.org/
 
-If you're reading this, please remind me to write this file!
+For instance, to run the "Service Civique" spider and get the results in XML:
+
+scrapy crawl service-civique.gouv.fr --set FEED_URI=output.xml --set \
+FEED_FORMAT=xml
+
+There is a lot of debug information on the standard error stream, use
+2>/dev/null if needed.
+
+If you're reading this, please remind me to continue writing this file!
 - Ptival (valentin.robert.42 at gmail dot com)
