@@ -94,7 +94,7 @@ class ServiceCiviqueSpider(BaseSpider):
             item['location'] = location[0]
         phone_number = mission.select('p[3]/text()').extract()
         if phone_number:
-            item['phone_number'] = phone_number[0]
+            item['phone_number'] = self.parse_phone_number(phone_number[0])
         item['description'] = mission.select('div/text()').extract()[0]
 
         structure = node.select('//div[@class="contact-m" and position()=1]')
@@ -107,3 +107,15 @@ class ServiceCiviqueSpider(BaseSpider):
         item['category'] = category
 
         return item
+
+    def parse_phone_number(self, phone_number):
+        """Try to normalize the phone number if it's not too complicated"""
+        if len(phone_number) < 10:
+            return None
+        res = re.match(
+            r'^[ ]?(\d\d)\D?(\d\d)\D?(\d\d)\D?(\d\d)\D?(\d\d)[ .]*$', phone_number)
+        if res:
+            return '%s %s %s %s %s' % res.groups()
+        #self.log('Could not parse phone number: "' + phone_number + '"',
+        #         level=log.WARNING)
+        return phone_number
