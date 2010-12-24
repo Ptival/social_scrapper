@@ -29,3 +29,5 @@ class OpportunityItem(Item):
     contact = Field()  # Person
     category = Field()
     skills = Field()
+    target = Field()
+    type = Field()
