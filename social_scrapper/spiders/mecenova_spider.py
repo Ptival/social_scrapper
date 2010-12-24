@@ -66,7 +66,6 @@ class MecenovaSpider(BaseSpider):
         if start_date_node:
             start_date = start_date_node.extract()[0]
             res = re.search(r'(\d{2})/(\d{4})$', start_date)
-            self.log('\n{' + start_date + '}\n')
             (item['start_date_month'], item['start_date_year']) = res.groups()
         end_date_node = node.select(
             'p[contains(./strong, "Fin")]/text()')
