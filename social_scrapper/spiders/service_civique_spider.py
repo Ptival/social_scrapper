@@ -19,13 +19,16 @@ category_dict = {
     'sport': 'sport'
 }
 
+
 class ServiceCiviqueSpider(BaseSpider):
     name = 'service-civique.gouv.fr'
     allowed_domains = ['service-civique.gouv.fr']
     prefix = 'http://www.service-civique.gouv.fr'
 
     def start_requests(self):
-        start_url = 'http://www.service-civique.gouv.fr/les_missions?date_filter[value][date]=&tid=All&tid_1=16&tid_2=All&tid_3=All&regions=All&dept=All&r=0&d=0'
+        start_url = 'http://www.service-civique.gouv.fr/les_missions?date_filt\
+                er[value][date]=&tid=All&tid_1=16&tid_2=All&tid_3=All&regions=\
+                All&dept=All&r=0&d=0'
         return [Request(start_url, callback=self.parse_result_page)]
 
     def parse_result_page(self, response):
@@ -33,21 +36,25 @@ class ServiceCiviqueSpider(BaseSpider):
         hxs = HtmlXPathSelector(response)
         mission_nodes = hxs.select('//div[@id="resultat_mission"]')
         for node in mission_nodes:
-            category = node.select('div[@class="thematique"]/p/text()').extract()
+            category = node.select(
+                'div[@class="thematique"]/p/text()').extract()
             # Sometimes they forget the category...
             if category:
                 category = category[0]
             # Normalize categories (FIXME: categories need to be formalized)
                 category = category_dict[category]
-            # Sometimes, there is no link (bug from their side), then we can't proceed
-            relative_url = node.select('div[@class="voir_mission"]/div/a/@href').extract()
+            # Sometimes, there is no link (bug from their side)
+            # In this case, we can't proceed
+            relative_url = node.select(
+                'div[@class="voir_mission"]/div/a/@href').extract()
             if relative_url:
                 relative_url = relative_url[0]
             else:
                 continue
             absolute_url = self.prefix + relative_url
             reqs.append(Request(absolute_url,
-                                callback=lambda r: self.parse_opportunity(r, category)))
+                                callback=lambda r:
+                                self.parse_opportunity(r, category)))
 
         next_page_node = hxs.select('//li[@class="pager-next"]')
         if next_page_node:
@@ -62,12 +69,12 @@ class ServiceCiviqueSpider(BaseSpider):
         hxs = HtmlXPathSelector(response)
         node = hxs.select('//div[@id="page-mission"]')
         item['feed'] = self.name
-        item['title'] = node.select('//div[@class="top-titre"]//p/text()').extract()[0]
+        item['title'] = node.select(
+            '//div[@class="top-titre"]//p/text()').extract()[0]
         item['uri'] = response.url
 
         mission = node.select('//div[@class="center-text"]')
         dates = mission.select('p[1]/text()').extract()[0]
-        #(duration_min, duration_max, start_date) = 
         # Examples
         # 6 mois, à partir du 01 Janvier 2010.
         # 6 mois à un an, à partir du 01 Janvier 2010.

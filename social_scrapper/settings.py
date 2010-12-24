@@ -6,7 +6,7 @@
 #     http://doc.scrapy.org/topics/settings.html
 #
 # Or you can copy and paste them from where they're defined in Scrapy:
-# 
+#
 #     scrapy/conf/default_settings.py
 #
 
@@ -17,4 +17,3 @@ SPIDER_MODULES = ['social_scrapper.spiders']
 NEWSPIDER_MODULE = 'social_scrapper.spiders'
 DEFAULT_ITEM_CLASS = 'social_scrapper.items.ScrapperItem'
 USER_AGENT = '%s/%s' % (BOT_NAME, BOT_VERSION)
-
