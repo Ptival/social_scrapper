@@ -58,7 +58,6 @@ class ServiceCiviqueSpider(BaseSpider):
 
         next_page_node = hxs.select('//li[@class="pager-next"]')
         if next_page_node:
-            self.log('SERVICE_CIVIQUE: Found a next page')
             relative_url = next_page_node.select('a/@href').extract()[0]
             absolute_url = self.prefix + relative_url
             reqs.append(Request(absolute_url, callback=self.parse_result_page))
@@ -90,7 +89,7 @@ class ServiceCiviqueSpider(BaseSpider):
             item['start_date_month'] = result[2]
             item['start_date_year'] = result[3]
         else:
-            self.log('SERVICE_CIVIQUE: Could not parse "' + dates + '"')
+            self.log('SERVICE_CIVIQUE: Could not parse {\n' + dates + '\n}')
 
         location = mission.select('p[2]/text()').extract()
         if location:
@@ -120,6 +119,6 @@ class ServiceCiviqueSpider(BaseSpider):
             phone_number, flags=re.UNICODE)
         if res:
             return '%s %s %s %s %s' % res.groups()
-        #self.log('Could not parse phone number: "' + phone_number + '"',
-        #         level=log.WARNING)
+        self.log('Could not parse phone number in {\n' + phone_number + '\n}',
+                 level=log.WARNING)
         return phone_number
