@@ -29,8 +29,6 @@ class ServiceCiviqueSpider(BaseSpider):
         return [Request(start_url, callback=self.parse_result_page)]
 
     def parse_result_page(self, response):
-        self.log('SERVICE_CIVIQUE: Parsing page ' + response.url)
-
         reqs = []
         hxs = HtmlXPathSelector(response)
         mission_nodes = hxs.select('//div[@id="resultat_mission"]')
@@ -60,8 +58,6 @@ class ServiceCiviqueSpider(BaseSpider):
         return reqs
 
     def parse_opportunity(self, response, category):
-        self.log('SERVICE_CIVIQUE: Parsing item ' + response.url)
-
         item = OpportunityItem()
         hxs = HtmlXPathSelector(response)
         node = hxs.select('//div[@id="page-mission"]')
@@ -113,7 +109,8 @@ class ServiceCiviqueSpider(BaseSpider):
         if len(phone_number) < 10:
             return None
         res = re.match(
-            r'^[ ]?(\d\d)\D?(\d\d)\D?(\d\d)\D?(\d\d)\D?(\d\d)[ .]*$', phone_number)
+            r'^[ ]?(\d\d)\D?(\d\d)\D?(\d\d)\D?(\d\d)\D?(\d\d)[ .]*$',
+            phone_number, flags=re.UNICODE)
         if res:
             return '%s %s %s %s %s' % res.groups()
         #self.log('Could not parse phone number: "' + phone_number + '"',
